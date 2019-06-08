@@ -1,0 +1,53 @@
+#include<p18cxxx.h>		//Include the library for the required microcontroller.
+#define SW PORTEbits.RE2		//Define a variable name for switch
+void Delay0(unsigned char);		//Initialize the delay function
+unsigned int c=0,d=0;		//Initialize two int type variables
+unsigned int startup[8]={0x7E,0xBE,0xDE,0xEE,0xF6,0xFA,0xFC};	//Store the hex values in an array required for startup
+unsigned int display[16]={0x70,0x60,0x84,0x62,0xC0,0x10,0x08,0x00,0x1E,0x40,0x48,0x98,0x0C,0x24,0x9C,0x02};
+//Store the hex values in another array to display various patterns on the display.
+void main(void)
+{
+	ADCON1=0x06;			//Sets RE0-RE2 as digital pins
+	TRISB=0x00;				//Set PORTB as O/P port
+	TRISEbits.TRISE2=1;		//Set the RE2 pin as I/P pin
+	for(c=0;c<7;c++)	//Initialize a for loop to show the startup pattern
+	{
+		PORTB=startup[c];	// O/P the required hex values to PORTB
+		Delay0(1);		//Delay of 1000 ms
+	}
+	Delay0(1);
+	Delay0(1);
+	while(1)	//Set an infinite loop to run the program forever
+	{
+		if(SW==1)	//Check the status of the switch
+		{
+			PORTB=display[d];	// O/P the required hex values of to O/P
+			Delay0(0);		//Delay of 500 ms
+			d=d+1;			//Increase the value to show the next pattern on display
+			if(d==16)		//Check if d has reached the last hex value of the array
+				d=0;		//Set d equal to zero again
+		}
+		else if(SW==0)		
+		{
+			PORTB=display[d];	//Display the same pattern till the switch remains OFF
+		}
+	}
+}
+void Delay0(unsigned char num)	//Delay Function
+{
+	T0CON=0x06;		//Timer0, 16-bit mode with prescaler 1:128
+	if(num==0)		//For delay of 500ms
+	{
+		TMR0H=0xB3;
+		TMR0L=0x00;
+	}
+	else			//For delay of 1000ms
+	{
+		TMR0H=0x60;
+		TMR0L=0x00;
+	}
+	T0CONbits.TMR0ON=1;		//Set T0 ON.
+	while(INTCONbits.TMR0IF==0);	//Check the overflow flag
+	T0CONbits.TMR0ON=0;		//Stop T0
+	INTCONbits.TMR0IF=0;	//Clear the overflow flag
+}
