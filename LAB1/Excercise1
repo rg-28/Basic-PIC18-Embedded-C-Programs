@@ -1,0 +1,13 @@
+#include<p18cxxx.h>	//Include the required library for the microcontroller.
+void main(void)
+{
+	unsigned char a=0;	//Initialise a variable.
+	TRISB=0;		//Set PORTB as O/P port.
+	while(1)		//Set an infinite loop to repeat the O/P.
+	{
+		for(a=255;a>=0;a--)		//Use for loop to change the value of the variable from FFH-00H.
+		{
+			PORTB=a;		// O/P the value of the variable to PORTB.
+		}
+	}
+}
