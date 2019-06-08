@@ -1,0 +1,105 @@
+#include<p18cxxx.h>		//Include the library for the required microcontroller.
+#define motor0 PORTBbits.RB0	//Define various variable names for different required pins
+#define motor1 PORTBbits.RB1
+#define enable PORTCbits.RC2
+#define led0 PORTAbits.RA0
+#define led1 PORTBbits.RB4
+#define led2 PORTBbits.RB5
+#define SW PORTEbits.RE2
+unsigned int c=0,d=0;	//Define two int variables
+void delay(unsigned char);	//Initailize the delay function
+void pwm(void);			//Initialize the pwm function
+void main(void)
+{
+	ADCON1=0x06;		//Sets RE0-RE2 as digital pins
+	TRISB=0;			//Sets PORTb as O/P port
+	TRISCbits.TRISC2=0;	//Sets RC2 as O/P pin
+	TRISAbits.TRISA0=0;	//Sets RA2 as O/P pin
+	TRISEbits.TRISE2=1;	//Sets RE2 as I/P pin
+	PORTB=0;
+	SW=0;
+	enable=0;
+	while(1)	//Set an infinite loop to run the program forever
+	{
+		CCP1CON=0;	//Clear CCP1CON register
+		if(SW==1)	//Check the status of switch
+			c=c+1;
+		switch(c)	//Switch case for repetitive pressing of switch
+		{
+			case 1:		//Case for motor rotating on forward direction with 50%duty cycle
+			{
+start_over:		led2=0;		//Switch OFF the red led
+				motor0=0;	//Switch OFF the motor
+				for(d=0;d<5;d++)	//for loop to show the required pattern on led
+				{
+					led0=1;
+					delay(0);
+					led0=0;
+					delay(1);
+				}
+continue0:		motor1=1;		//Rotate the motor in forward direction
+				led1=1;			//Switch ON the green led
+				CCPR1L=150;		//For duty cycle of 50%
+				CCP1CON=0x2C;
+				pwm();
+				break;
+			}
+			case 2:		//Case for rotating motor in reverse direction with 100% duty cycle
+			{
+				motor1=0;	//Switch OFF the motor
+				led1=0;		//Switch OFF the green led
+				for(d=0;d<5;d++)
+				{
+					led0=1;
+					delay(1);
+					led0=0;
+					delay(0);
+				}
+continue1:		motor0=1;		//Rotate the motor in reverse direction
+				led2=1;			//Switch ON the red led
+				CCPR1L=250;		//For duty cycle of 100%
+				CCP1CON=0x0C;
+				pwm();
+				break;
+			}
+			case 3:		//When the switch is pressed again while the motor is rotating in reverse direction
+			{
+				c=0;
+				goto start_over;
+			}
+			if(SW==0 && c==1)		//Check the status of switch & c
+				goto continue0;
+			else if(SW==0 && c==2)
+				goto continue1;
+		}
+	}
+}
+void delay(unsigned char num)		//Delay function
+{
+	T0CON=0x06;		//Timer0, 16-bit mode with prescaler 1:128
+	if(num==0)		//For delay of 500ms
+	{
+		TMR0H=0xB3;
+		TMR0L=0x00;
+	}
+	else			//For delay of 1000ms
+	{
+		TMR0H=0x60;
+		TMR0L=0x00;
+	}
+	T0CONbits.TMR0ON=1;		//Set TMR0 ON.
+	while(INTCONbits.TMR0IF==0);	//Check the overflow flag
+	T0CONbits.TMR0ON=0;		//Stop TMR0
+	INTCONbits.TMR0IF=0;	//Clear the overflow flag
+}
+void pwm(void)		//PWM function
+{
+	PR2=250;		//For 20 kHz frequency wave
+	T2CON=0X00;		//Timer 2, no prescaler or postscalar
+	TMR2=0;			//Clear Timer2
+	PIR1bits.TMR2IF=0;		//Clear Timer Overflow flag
+	T2CONbits.TMR2ON=1;		//Start Timer2
+	while(PIR1bits.TMR2IF==0);		//Check the timer overflow flag
+	T2CONbits.TMR2ON=0;		//Stop Timer2
+	PIR1bits.TMR2IF=0;		//Clear Timer Overflow flag
+}
