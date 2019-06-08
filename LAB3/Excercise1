@@ -1,0 +1,20 @@
+#include<p18cxxx.h>		//Include the library of the required microcontroller.
+void main(void)
+{
+	TRISAbits.TRISA4=1;		//Set RA4/T0CKI as I/P.
+	TRISB=0;			//Set PORTB as O/P.
+	T0CON=0x68;			//Counter 0, 8-bit mode
+	TMR0L=0;			//Set counter at 00H.
+	
+	while(1)		//Set an infinite loop to repeat the program forever.
+	{
+		do			//Set up a do-while loop.
+		{
+			T0CONbits.TMR0ON=1;		//Turn on T0.
+			PORTB=TMR0L;			//Send the value of counter to PORTB.
+		}
+		while(INTCONbits.TMR0IF==0);	//Wait for TF0 to roll over and count till FFH+1.
+		T0CONbits.TMR0ON=0;				//Turn OFF T0
+		INTCONbits.TMR0IF=0;			//Clear the Timer overflow flag.
+	}
+}
