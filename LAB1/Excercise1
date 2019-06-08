@@ -1,4 +1,4 @@
-#include<p18cxxx.h>	//Include the required library for the microcontroller.
+#include<p18cxxx.h>	 //Include the required library for the microcontroller.
 void main(void)
 {
 	unsigned char a=0;	//Initialise a variable.
