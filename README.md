@@ -20,3 +20,9 @@ Excercise1: This program toggles the output at pin 0 of PORTB with a delay gener
 
 exc5: This program helps to toggle the output at pin RB0 if the onboard switch of PIC-P40 is in OFF position and othervise toggle the output at pin RB4 of PIC18 and also the delay used to create waves of different frequencies is generated using Timer.
  
+
+LAB3 includes the following programs:
+
+Excercise1: This program helps to count the number of pulses sent to pin RA4 (with max value upto FFH) and then output the value of the counter at PORTB of PIC18.
+
+exc2: This program helps to count the number of pulses sent to pin RA4 (with max value upto FFFFH) and then output the higher bytes of the counter at PORTD and lower bytes to PORTB of PIC18.
