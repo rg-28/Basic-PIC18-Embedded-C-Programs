@@ -1,0 +1,75 @@
+#include<p18cxxx.h>		//Include the library for the required microcontroller.
+void pwm(void);		//Initialise the pwm function.
+#define mybit PORTCbits.RC2		//Define variable for various bits
+#define SW PORTEbits.RE2
+unsigned int c=0;		//Initialise a variable to store the number of times the button is pressed.
+void main(void)
+{
+	ADCON1=0x06;		//Sets RA0-RA5 & RE0-RE2 as Digital mode.
+	TRISEbits.TRISE2=1;	//Sets RE2 as I/P pin
+	TRISCbits.TRISC2=0;	//Sets RC2 as O/P pin
+	mybit=0;		//Switch OFF the LED
+	SW=0;			
+	while(1)		//Set an infinite loop to run the program forever
+	{
+		CCP1CON=0;	//Clear CCP1CON register
+start:if(SW==1 && c<5)	//Check if the button is pressed & its number is less than 5
+		c=c+1;		//Increase the value of c
+	else if(c>5)
+		c=0;
+	switch(c)		//Switch case for different duty cycle when the button is pressed each time
+	{
+		case 1:		//When button is pressed for first time
+			{
+				CCPR1L=226;		//For duty cycle of 100%
+				CCP1CON=0x0C;
+				pwm();
+				break;
+			}
+		case 2:		//When button is pressed for second time
+			{
+				CCPR1L=169;		//For duty cycle of 75%
+				CCP1CON=0x2C;
+				pwm();
+				break;
+			}
+		case 3:		//When button is pressed for third time
+			{
+				CCPR1L=113;		//For duty cycle of 50%
+				CCP1CON=0x0C;
+				pwm();
+				break;
+			}
+		case 4:		//When button is pressed for fourth time
+			{
+				CCPR1L=56;		//For duty cycle of 25%
+				CCP1CON=0x2C;
+				pwm();
+				break;
+			}
+		case 5:		//When button is pressed for fifth time
+			{
+				CCPR1L=0;		//For duty cycle of 0%
+				CCP1CON=0x0C;
+				pwm();
+				break;
+			}
+		default:	//If the button is not pressed after power is switched ON
+			{
+				goto start;
+				break;
+			}
+	}
+	}
+}
+void pwm(void)
+{
+	PR2=226;		//For 22 kHz frequency wave
+	T2CON=0X00;		//Timer 2, no prescaler or postscalar
+	TMR2=0;			//Clear Timer2
+	PIR1bits.TMR2IF=0;		//Clear Timer Overflow flag
+	T2CONbits.TMR2ON=1;		//Start Timer2
+	while(PIR1bits.TMR2IF==0);		//Check the timer overflow flag
+	T2CONbits.TMR2ON=0;		//Stop Timer2
+	PIR1bits.TMR2IF=0;		//Clear Timer Overflow flag
+}
