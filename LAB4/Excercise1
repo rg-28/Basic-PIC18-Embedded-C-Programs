@@ -1,0 +1,34 @@
+#include<p18cxxx.h>		//Include the library for the required microcontroller.
+void Delay0(unsigned char);		//Initialise the Delay function
+#define mybit PORTAbits.RA0		//Define a variable name
+void main(void)
+{
+	ADCON1=0x06;		//Sets RA0-RA5 & RE0-RE2 as Digital mode.
+	TRISAbits.TRISA0=0;	//Sets RA0 as O/P pin
+	while(1)		//Set an infinite loop to run the program forever.
+	{
+		mybit=1;	//Set the LED HIGH.
+		Delay0(0);	//Delay of 500ms
+		mybit=0;	//Set the LED as LOW.
+		Delay0(1);	//Delay of 1000ms
+	}
+}
+
+void Delay0(unsigned char c)	//Delay function
+{
+	T0CON=0x06;		//Timer0, 16-bit mode with prescaler 1:128
+	if(c==0)		//For delay of 500ms
+	{
+		TMR0H=0xB3;
+		TMR0L=0x00;
+	}
+	else			//For delay of 1000ms
+	{
+		TMR0H=0x60;
+		TMR0L=0x00;
+	}
+	T0CONbits.TMR0ON=1;		//Set T0 ON.
+	while(INTCONbits.TMR0IF==0);	//Check the overflow flag
+	T0CONbits.TMR0ON=0;		//Stop T0
+	INTCONbits.TMR0IF=0;	//Clear the overflow flag
+}
