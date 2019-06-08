@@ -26,3 +26,20 @@ LAB3 includes the following programs:
 Excercise1: This program helps to count the number of pulses sent to pin RA4 (with max value upto FFH) and then output the value of the counter at PORTB of PIC18.
 
 exc2: This program helps to count the number of pulses sent to pin RA4 (with max value upto FFFFH) and then output the higher bytes of the counter at PORTD and lower bytes to PORTB of PIC18.
+
+
+LAB4 includes the following programs:
+
+Excercise1: This program helps to light the onboard led of PIC18-P40 board for 500 ms while switch it off for 1000ms. Also the delays are created using timers.
+
+exc2: This program helps to switch on\off the onboard led of PIC18-P40 board three times with a delay of 1000 ms and then generates a delay of 500 ms when the onboard switch is pressed odd number of times while the reverse pattern occurs with an external led connected to RB0 pin when the switch is pressed even number of times.
+
+
+LAB5 includes the following programs:
+
+Excercise1: This program helps to send a pwm wave with different duty cycles at pin RC2 of PIC18 when the onboard switch of PIC18-P40 board is pressed various number of times succesively.
+
+
+LAB6 includes the following programs:
+
+Excercise1: This program helps to light the 7-segment display connected to the PIC18 in a specific pattern in which different characters are displayed on the display after specific time delays.
